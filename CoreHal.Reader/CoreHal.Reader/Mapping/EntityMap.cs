@@ -3,39 +3,39 @@ using System.Collections.Generic;
 
 namespace CoreHal.Reader.Mapping
 { 
-    public class ComplexModel1Mapper : HalEntityMapper<ComplexModel1>
+    public class ComplexModel1Mapper : EntityMapper<ComplexModel1>
     {
-        private readonly IHalEntityMapper<ComplexModel2> complex2Mapper;
+        private readonly IEntityMapper<ComplexModel2> complex2Mapper;
 
-        public ComplexModel1Mapper(IHalEntityMapper<ComplexModel2> complex2Mapper) : base()
+        public ComplexModel1Mapper(IEntityMapper<ComplexModel2> complex2Mapper) : base()
         {
             this.complex2Mapper = complex2Mapper;
         }
 
-        public override ComplexModel1 Map(IDictionary<string, object> raw)
+        public override ComplexModel1 Map()
         {
-            rawData = raw;
+            Entity.Id = MapTo<Guid>("id");
+            Entity.Name = MapTo<string>("full-name");
+            Entity.Date = MapTo<DateTime>("date");
 
-            entity.Id = MapTo<Guid>("id");
-            entity.Name = MapTo<string>("full-name");
-            entity.Date = MapTo<DateTime>("date");
-            entity.Complex = complex2Mapper.Map((IDictionary<string, object>)raw["Complex"]);
+            complex2Mapper.LoadData(GetPropertyAsDictionary("Complex"));
+            Entity.Complex = complex2Mapper.Map();
 
-            return entity;
+
+
+            return Entity;
         }
     }
 
-    public class ComplexModel2Mapper : HalEntityMapper<ComplexModel2>
+    public class ComplexModel2Mapper : EntityMapper<ComplexModel2>
     {
-        public override ComplexModel2 Map(IDictionary<string, object> raw)
+        public override ComplexModel2 Map()
         {
-            rawData = raw;
+            Entity.Id = MapTo<Guid>("id");
+            Entity.Name = MapTo<string>("full-name");
+            Entity.Description = MapTo<string>("description");
 
-            entity.Id = MapTo<Guid>("id");
-            entity.Name = MapTo<string>("full-name");
-            entity.Description = MapTo<string>("description");
-
-            return entity;
+            return Entity;
         }
     }
 

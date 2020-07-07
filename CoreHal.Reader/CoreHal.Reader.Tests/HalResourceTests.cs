@@ -14,7 +14,7 @@ namespace CoreHal.Reader.Tests
         public void Constructing_WithNullResourceLoaderProvided_ThrowsException()
         {
             IHalResourceLoader loader = null;
-            var mapperFactory = new Mock<IHalEntityMapperFactory>();
+            var mapperFactory = new Mock<IEntityMapperFactory>();
 
             Assert.Throws<ArgumentNullException>(() =>
             {
@@ -26,7 +26,7 @@ namespace CoreHal.Reader.Tests
         public void Constructing_WithNullResourceLoaderAndMapperFactoryProvided_ThrowsException()
         {
             IHalResourceLoader loader = null;
-            var mapperFactory = new Mock<IHalEntityMapperFactory>();
+            var mapperFactory = new Mock<IEntityMapperFactory>();
 
             Assert.Throws<ArgumentNullException>(() =>
             {
@@ -38,7 +38,7 @@ namespace CoreHal.Reader.Tests
         public void Constructing_WithResourceLoaderAndNullMapperFactoryProvided_ThrowsException()
         {
             var loader = new Mock<IHalResourceLoader>();
-            IHalEntityMapperFactory mapperFactory = null;
+            IEntityMapperFactory mapperFactory = null;
 
             Assert.Throws<ArgumentNullException>(() =>
             {
@@ -50,7 +50,7 @@ namespace CoreHal.Reader.Tests
         public void Loading_WithNullRawResponseProvided_ThrowsException()
         {
             var loader = new Mock<IHalResourceLoader>();
-            var mapperFactory = new Mock<IHalEntityMapperFactory>();
+            var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
 
@@ -64,7 +64,7 @@ namespace CoreHal.Reader.Tests
         public void Loading_WithEmptyRawResponseProvided_ThrowsException()
         {
             var loader = new Mock<IHalResourceLoader>();
-            var mapperFactory = new Mock<IHalEntityMapperFactory>();
+            var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
 
@@ -78,7 +78,7 @@ namespace CoreHal.Reader.Tests
         public void Loading_CallsLoad()
         {
             var loader = new Mock<IHalResourceLoader>();
-            var mapperFactory = new Mock<IHalEntityMapperFactory>();
+            var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
             resource.Load("some non null and non empty string");
@@ -90,7 +90,7 @@ namespace CoreHal.Reader.Tests
         public void Loading_CallsLinkLoader()
         {
             var loader = new Mock<IHalResourceLoader>();
-            var mapperFactory = new Mock<IHalEntityMapperFactory>();
+            var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
             resource.Load("some non null and non empty string");
@@ -102,7 +102,7 @@ namespace CoreHal.Reader.Tests
         public void Loading_CallsPropertyLoader()
         {
             var loader = new Mock<IHalResourceLoader>();
-            var mapperFactory = new Mock<IHalEntityMapperFactory>();
+            var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
             resource.Load("some non null and non empty string");
@@ -114,7 +114,7 @@ namespace CoreHal.Reader.Tests
         public void Loading_CallsEmbeddedItemsLoader()
         {
             var loader = new Mock<IHalResourceLoader>();
-            var mapperFactory = new Mock<IHalEntityMapperFactory>();
+            var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
             resource.Load("some non null and non empty string");
@@ -126,7 +126,7 @@ namespace CoreHal.Reader.Tests
         public void GettingProperty_WithNullPropertyNameProvided_ThrowsException()
         {
             var loader = new Mock<IHalResourceLoader>();
-            var mapperFactory = new Mock<IHalEntityMapperFactory>();
+            var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
             resource.Load("some non null and non empty string");
@@ -141,7 +141,7 @@ namespace CoreHal.Reader.Tests
         public void GettingProperty_WithEmptyPropertyNameProvided_ThrowsException()
         {
             var loader = new Mock<IHalResourceLoader>();
-            var mapperFactory = new Mock<IHalEntityMapperFactory>();
+            var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
             resource.Load("some non null and non empty string");
@@ -162,7 +162,7 @@ namespace CoreHal.Reader.Tests
             loader.Setup(loader => loader.LoadProperties())
                 .Returns(new Dictionary<string, object> { { propertyName, propertyValue } });
 
-            var mapperFactory = new Mock<IHalEntityMapperFactory>();
+            var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
             resource.Load("some non null and non empty string");
@@ -185,7 +185,7 @@ namespace CoreHal.Reader.Tests
             loader.Setup(loader => loader.LoadProperties())
                 .Returns(new Dictionary<string, object> { { propertyName, propertyValue } });
 
-            var mapperFactory = new Mock<IHalEntityMapperFactory>();
+            var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
             resource.Load("some non null and non empty string");
@@ -206,7 +206,7 @@ namespace CoreHal.Reader.Tests
             loader.Setup(loader => loader.LoadProperties())
                 .Returns(new Dictionary<string, object> { { propertyName, propertyValue } });
 
-            var mapperFactory = new Mock<IHalEntityMapperFactory>();
+            var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
             resource.Load("some non null and non empty string");
@@ -227,7 +227,7 @@ namespace CoreHal.Reader.Tests
             loader.Setup(loader => loader.LoadProperties())
                 .Returns(new Dictionary<string, object> { { propertyName, propertyValue } });
 
-            var mapperFactory = new Mock<IHalEntityMapperFactory>();
+            var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
             resource.Load("some non null and non empty string");
@@ -267,7 +267,7 @@ namespace CoreHal.Reader.Tests
                     }
                 });
 
-            var mapperFactory = new Mock<IHalEntityMapperFactory>();
+            var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
             resource.Load("some non null and non empty string");
@@ -307,7 +307,7 @@ namespace CoreHal.Reader.Tests
                     }
                 });
 
-            var mapperFactory = new Mock<IHalEntityMapperFactory>();
+            var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
             resource.Load("some non null and non empty string");
@@ -347,7 +347,7 @@ namespace CoreHal.Reader.Tests
                     }
                 });
 
-            var mapperFactory = new Mock<IHalEntityMapperFactory>();
+            var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
             resource.Load("some non null and non empty string");
@@ -387,7 +387,7 @@ namespace CoreHal.Reader.Tests
                     }
                 });
 
-            var mapperFactory = new Mock<IHalEntityMapperFactory>();
+            var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
             resource.Load("some non null and non empty string");
@@ -430,7 +430,7 @@ namespace CoreHal.Reader.Tests
                     }
                 });
 
-            var mapperFactory = new Mock<IHalEntityMapperFactory>();
+            var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
             resource.Load("some non null and non empty string");
@@ -473,7 +473,7 @@ namespace CoreHal.Reader.Tests
                     }
                 });
 
-            var mapperFactory = new Mock<IHalEntityMapperFactory>();
+            var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
             resource.Load("some non null and non empty string");

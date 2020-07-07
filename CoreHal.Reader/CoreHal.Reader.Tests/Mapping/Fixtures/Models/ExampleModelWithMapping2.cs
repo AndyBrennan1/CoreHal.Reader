@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CoreHal.Reader.Tests.Mapping.Fixtures
+namespace CoreHal.Reader.Tests.Mapping.Fixtures.Models
 {
     public class ExampleModelWithMapping2
     {

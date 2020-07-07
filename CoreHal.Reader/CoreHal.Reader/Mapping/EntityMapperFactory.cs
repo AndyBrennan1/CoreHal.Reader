@@ -5,13 +5,13 @@ using System.Linq;
 
 namespace CoreHal.Reader.Mapping
 {
-    public abstract class HalEntityMapperFactory : IHalEntityMapperFactory
+    public abstract class EntityMapperFactory : IEntityMapperFactory
     {
-        protected HalEntityMapperConfiguration configuration;
+        protected EntityMapperConfiguration configuration;
 
         public Dictionary<Type, object> Mappers { get; set; }
 
-        public IHalEntityMapper<TEntity> GetMapper<TEntity>() where TEntity : class, new()
+        public IEntityMapper<TEntity> GetMapper<TEntity>() where TEntity : class, new()
         {
             if (Mappers == null)
                 throw new NoMappersRegisteredException();
@@ -19,12 +19,12 @@ namespace CoreHal.Reader.Mapping
             if (!Mappers.ContainsKey(typeof(TEntity)))
                 throw new TypeHasNoMapperException(typeof(TEntity));
 
-            return (IHalEntityMapper<TEntity>)Mappers[typeof(TEntity)];
+            return (IEntityMapper<TEntity>)Mappers[typeof(TEntity)];
         }
 
         public void RegisterMappers()
         {
-            configuration = new HalEntityMapperConfiguration();
+            configuration = new EntityMapperConfiguration();
             Configure(configuration);
 
             if (configuration.Mappers == null || !configuration.Mappers.Any())
@@ -33,6 +33,6 @@ namespace CoreHal.Reader.Mapping
             Mappers = configuration.Mappers;
         }
 
-        public abstract void Configure(HalEntityMapperConfiguration cfg);
+        public abstract void Configure(EntityMapperConfiguration cfg);
     }
 }

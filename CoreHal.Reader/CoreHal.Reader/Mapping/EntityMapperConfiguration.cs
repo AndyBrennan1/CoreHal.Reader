@@ -5,16 +5,16 @@ using Validation;
 
 namespace CoreHal.Reader.Mapping
 {
-    public class HalEntityMapperConfiguration
+    public class EntityMapperConfiguration
     {
         public Dictionary<Type, object> Mappers { get; private set; }
 
-        public HalEntityMapperConfiguration()
+        public EntityMapperConfiguration()
         {
             Mappers = new Dictionary<Type, object>();
         }
 
-        public HalEntityMapperConfiguration AddMapper<TEntity>(IHalEntityMapper<TEntity> mapper) 
+        public EntityMapperConfiguration AddMapper<TEntity>(IEntityMapper<TEntity> mapper) 
             where TEntity : class, new()
         {
             Requires.NotNull(mapper, nameof(mapper));

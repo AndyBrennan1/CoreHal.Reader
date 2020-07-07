@@ -11,7 +11,7 @@ namespace CoreHal.Reader
     public class HalResource
     {
         private readonly IHalResourceLoader halResourceLoader;
-        private readonly IHalEntityMapperFactory mapperFactory;
+        private readonly IEntityMapperFactory mapperFactory;
 
         public IDictionary<string, IEnumerable<Link>> Links { get; private set; }
         public IDictionary<string,object> Properties { get; private set; }
@@ -24,7 +24,7 @@ namespace CoreHal.Reader
             halResourceLoader = HalResourceLoader;
         }
 
-        public HalResource(IHalResourceLoader HalResourceLoader, IHalEntityMapperFactory mapperFactory)
+        public HalResource(IHalResourceLoader HalResourceLoader, IEntityMapperFactory mapperFactory)
         {
             Requires.NotNull(HalResourceLoader,nameof(HalResourceLoader));
             Requires.NotNull(mapperFactory, nameof(mapperFactory));
@@ -36,6 +36,7 @@ namespace CoreHal.Reader
         public void Load(string rawResponse)
         {
             Requires.NotNullOrEmpty(rawResponse, nameof(rawResponse));
+
             halResourceLoader.Load(rawResponse);
             Links = halResourceLoader.LoadLinks();
             Properties = halResourceLoader.LoadProperties();
@@ -79,7 +80,9 @@ namespace CoreHal.Reader
             where TEntity : class, new()
         {
             var mapper = this.mapperFactory.GetMapper<TEntity>();
-            return mapper.Map(this.Properties);
+            mapper.LoadData(this.Properties);
+    
+            return mapper.Map();
         }
 
         public IEnumerable<TProperty> GetEmbeddedSet<TProperty>(string embeddedItemKey) 

@@ -1,11 +1,12 @@
 ﻿using CoreHal.Reader.Mapping;
 using CoreHal.Reader.Mapping.Exceptions;
-using CoreHal.Reader.Tests.Mapping.Fixtures;
+using CoreHal.Reader.Tests.Mapping.Fixtures.Factories;
+using CoreHal.Reader.Tests.Mapping.Fixtures.Models;
 using Xunit;
 
 namespace CoreHal.Reader.Tests.Mapping
 {
-    public class HalEntityMapperFactoryTests
+    public class EntityMapperFactoryTests
     {
         [Fact]
         public void RegisteringMappers_WhenNothingSetInConfig_ThrowsException()
@@ -73,7 +74,7 @@ namespace CoreHal.Reader.Tests.Mapping
             var mapper = factory.GetMapper<ExampleModelWithMapping1>();
 
             Assert.NotNull(mapper);
-            Assert.IsAssignableFrom<IHalEntityMapper<ExampleModelWithMapping1>>(mapper);
+            Assert.IsAssignableFrom<IEntityMapper<ExampleModelWithMapping1>>(mapper);
         }
 
     }

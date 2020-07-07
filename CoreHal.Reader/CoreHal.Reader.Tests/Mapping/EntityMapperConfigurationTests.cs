@@ -1,17 +1,18 @@
 ﻿using CoreHal.Reader.Mapping;
 using CoreHal.Reader.Mapping.Exceptions;
-using CoreHal.Reader.Tests.Mapping.Fixtures;
+using CoreHal.Reader.Tests.Mapping.Fixtures.Mappers;
+using CoreHal.Reader.Tests.Mapping.Fixtures.Models;
 using System;
 using Xunit;
 
 namespace CoreHal.Reader.Tests.Mapping
 {
-    public class HalEntityMapperConfigurationTests
+    public class EntityMapperConfigurationTests
     {
         [Fact]
         public void Constructing_InitializesMappersDictionary()
         {
-            var configuration = new HalEntityMapperConfiguration();
+            var configuration = new EntityMapperConfiguration();
 
             Assert.NotNull(configuration.Mappers);
         }
@@ -19,7 +20,7 @@ namespace CoreHal.Reader.Tests.Mapping
         [Fact]
         public void AddingMapper_WithNullMapperProvided_ThrowsException()
         {
-            var configuration = new HalEntityMapperConfiguration();
+            var configuration = new EntityMapperConfiguration();
 
             Assert.Throws<ArgumentNullException>(() =>
             {
@@ -30,20 +31,20 @@ namespace CoreHal.Reader.Tests.Mapping
         [Fact]
         public void AddingMapper_WithMapperProvided_AddsItToTheMapperDictionary()
         {
-            var configuration = new HalEntityMapperConfiguration();
+            var configuration = new EntityMapperConfiguration();
 
             configuration.AddMapper(new MapperForExampleModel1());
 
             Assert.Single(configuration.Mappers);
 
-            Assert.IsAssignableFrom<IHalEntityMapper<ExampleModelWithMapping1>>
+            Assert.IsAssignableFrom<IEntityMapper<ExampleModelWithMapping1>>
                 (configuration.Mappers[typeof(ExampleModelWithMapping1)]);
         }
 
         [Fact]
         public void AddingMapper_ForSameTypeTwice_ThrowsException()
         {
-            var configuration = new HalEntityMapperConfiguration();
+            var configuration = new EntityMapperConfiguration();
             configuration.AddMapper<ExampleModelWithMapping1>(new MapperForExampleModel1());
 
             Assert.Throws<MapperAlreadyRegisteredForTypeException>(() =>
