@@ -38,10 +38,7 @@ namespace CoreHal.Reader
         {
             Requires.NotNullOrEmpty(rawResponse, nameof(rawResponse));
 
-            halResourceLoader.Load(rawResponse);
-            Links = halResourceLoader.LoadLinks();
-            Properties = halResourceLoader.LoadProperties();
-            EmbeddedItems = halResourceLoader.LoadEmbeddedItems();
+            var dataDictionary = halResourceLoader.Load(rawResponse);
         }
 
         public TEntity GetSimplePropertyAs<TEntity>(string propertyName)
