@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CoreHal.Reader.Tests.Fixtures
 {
-    public class EmbeddedItem2MockLoader : IHalResourceLoader
+    public class EmbeddedItem2MockLoader : IHalResponseLoader
     {
         public void Load(string rawResponse)
         {

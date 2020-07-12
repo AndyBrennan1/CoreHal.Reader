@@ -1,5 +1,6 @@
 ﻿using CoreHal.Graph;
 using CoreHal.Reader.Mapping;
+using CoreHal.Reader.Mapping.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,25 +9,25 @@ using Validation;
 
 namespace CoreHal.Reader
 {
-    public class HalResource
+    public class HalResource : IHalResource
     {
-        private readonly IHalResourceLoader halResourceLoader;
+        private readonly IHalResponseLoader halResourceLoader;
         private readonly IEntityMapperFactory mapperFactory;
 
         public IDictionary<string, IEnumerable<Link>> Links { get; private set; }
-        public IDictionary<string,object> Properties { get; private set; }
+        public IDictionary<string, object> Properties { get; private set; }
         public IDictionary<string, IEnumerable<HalResource>> EmbeddedItems { get; private set; }
 
-        public HalResource(IHalResourceLoader HalResourceLoader)
+        public HalResource(IHalResponseLoader HalResourceLoader)
         {
             Requires.NotNull(HalResourceLoader, nameof(HalResourceLoader));
 
             halResourceLoader = HalResourceLoader;
         }
 
-        public HalResource(IHalResourceLoader HalResourceLoader, IEntityMapperFactory mapperFactory)
+        public HalResource(IHalResponseLoader HalResourceLoader, IEntityMapperFactory mapperFactory)
         {
-            Requires.NotNull(HalResourceLoader,nameof(HalResourceLoader));
+            Requires.NotNull(HalResourceLoader, nameof(HalResourceLoader));
             Requires.NotNull(mapperFactory, nameof(mapperFactory));
 
             halResourceLoader = HalResourceLoader;
@@ -76,24 +77,24 @@ namespace CoreHal.Reader
             return result;
         }
 
-        public TEntity CastAs<TEntity>() 
+        public TEntity CastAs<TEntity>()
             where TEntity : class, new()
         {
             var mapper = this.mapperFactory.GetMapper<TEntity>();
             mapper.LoadData(this.Properties);
-    
+
             return mapper.Map();
         }
 
-        public IEnumerable<TProperty> GetEmbeddedSet<TProperty>(string embeddedItemKey) 
+        public IEnumerable<TProperty> GetEmbeddedSet<TProperty>(string embeddedItemKey)
             where TProperty : class, new()
         {
             throw new NotImplementedException();
         }
 
         private TEntity CreateFromDictionary<TEntity>(
-            IDictionary<string, object> dictionary, 
-            KeyValuePair<string, string>[] mappings) 
+            IDictionary<string, object> dictionary,
+            KeyValuePair<string, string>[] mappings)
             where TEntity : new()
         {
             TEntity entity = new TEntity();

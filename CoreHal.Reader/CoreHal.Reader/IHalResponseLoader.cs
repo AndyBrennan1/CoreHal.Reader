@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CoreHal.Reader
 {
-    public interface IHalResourceLoader
+    public interface IHalResponseLoader
     {
         void Load(string rawResponse);
         IDictionary<string, IEnumerable<Link>> LoadLinks();

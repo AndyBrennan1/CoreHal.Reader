@@ -1,4 +1,5 @@
 ﻿using CoreHal.Reader.Mapping;
+using CoreHal.Reader.Mapping.Exceptions;
 using CoreHal.Reader.Tests.Fixtures;
 using DeepEqual.Syntax;
 using Moq;
@@ -13,7 +14,7 @@ namespace CoreHal.Reader.Tests
         [Fact]
         public void Constructing_WithNullResourceLoaderProvided_ThrowsException()
         {
-            IHalResourceLoader loader = null;
+            IHalResponseLoader loader = null;
             var mapperFactory = new Mock<IEntityMapperFactory>();
 
             Assert.Throws<ArgumentNullException>(() =>
@@ -25,7 +26,7 @@ namespace CoreHal.Reader.Tests
         [Fact]
         public void Constructing_WithNullResourceLoaderAndMapperFactoryProvided_ThrowsException()
         {
-            IHalResourceLoader loader = null;
+            IHalResponseLoader loader = null;
             var mapperFactory = new Mock<IEntityMapperFactory>();
 
             Assert.Throws<ArgumentNullException>(() =>
@@ -37,7 +38,7 @@ namespace CoreHal.Reader.Tests
         [Fact]
         public void Constructing_WithResourceLoaderAndNullMapperFactoryProvided_ThrowsException()
         {
-            var loader = new Mock<IHalResourceLoader>();
+            var loader = new Mock<IHalResponseLoader>();
             IEntityMapperFactory mapperFactory = null;
 
             Assert.Throws<ArgumentNullException>(() =>
@@ -49,7 +50,7 @@ namespace CoreHal.Reader.Tests
         [Fact]
         public void Loading_WithNullRawResponseProvided_ThrowsException()
         {
-            var loader = new Mock<IHalResourceLoader>();
+            var loader = new Mock<IHalResponseLoader>();
             var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
@@ -63,7 +64,7 @@ namespace CoreHal.Reader.Tests
         [Fact]
         public void Loading_WithEmptyRawResponseProvided_ThrowsException()
         {
-            var loader = new Mock<IHalResourceLoader>();
+            var loader = new Mock<IHalResponseLoader>();
             var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
@@ -77,7 +78,7 @@ namespace CoreHal.Reader.Tests
         [Fact]
         public void Loading_CallsLoad()
         {
-            var loader = new Mock<IHalResourceLoader>();
+            var loader = new Mock<IHalResponseLoader>();
             var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
@@ -89,7 +90,7 @@ namespace CoreHal.Reader.Tests
         [Fact]
         public void Loading_CallsLinkLoader()
         {
-            var loader = new Mock<IHalResourceLoader>();
+            var loader = new Mock<IHalResponseLoader>();
             var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
@@ -101,7 +102,7 @@ namespace CoreHal.Reader.Tests
         [Fact]
         public void Loading_CallsPropertyLoader()
         {
-            var loader = new Mock<IHalResourceLoader>();
+            var loader = new Mock<IHalResponseLoader>();
             var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
@@ -113,7 +114,7 @@ namespace CoreHal.Reader.Tests
         [Fact]
         public void Loading_CallsEmbeddedItemsLoader()
         {
-            var loader = new Mock<IHalResourceLoader>();
+            var loader = new Mock<IHalResponseLoader>();
             var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
@@ -125,7 +126,7 @@ namespace CoreHal.Reader.Tests
         [Fact]
         public void GettingProperty_WithNullPropertyNameProvided_ThrowsException()
         {
-            var loader = new Mock<IHalResourceLoader>();
+            var loader = new Mock<IHalResponseLoader>();
             var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
@@ -140,7 +141,7 @@ namespace CoreHal.Reader.Tests
         [Fact]
         public void GettingProperty_WithEmptyPropertyNameProvided_ThrowsException()
         {
-            var loader = new Mock<IHalResourceLoader>();
+            var loader = new Mock<IHalResponseLoader>();
             var mapperFactory = new Mock<IEntityMapperFactory>();
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
@@ -158,7 +159,7 @@ namespace CoreHal.Reader.Tests
             const string propertyName = "string-property";
             const string propertyValue = "some string";
 
-            var loader = new Mock<IHalResourceLoader>();
+            var loader = new Mock<IHalResponseLoader>();
             loader.Setup(loader => loader.LoadProperties())
                 .Returns(new Dictionary<string, object> { { propertyName, propertyValue } });
 
@@ -181,7 +182,7 @@ namespace CoreHal.Reader.Tests
             const string propertyName = "string-property";
             const string propertyValue = "some string";
 
-            var loader = new Mock<IHalResourceLoader>();
+            var loader = new Mock<IHalResponseLoader>();
             loader.Setup(loader => loader.LoadProperties())
                 .Returns(new Dictionary<string, object> { { propertyName, propertyValue } });
 
@@ -202,7 +203,7 @@ namespace CoreHal.Reader.Tests
             const string propertyName = "string-property";
             const string propertyValue = "some string";
 
-            var loader = new Mock<IHalResourceLoader>();
+            var loader = new Mock<IHalResponseLoader>();
             loader.Setup(loader => loader.LoadProperties())
                 .Returns(new Dictionary<string, object> { { propertyName, propertyValue } });
 
@@ -223,7 +224,7 @@ namespace CoreHal.Reader.Tests
             const string propertyName = "string-property";
             const string propertyValue = "some string";
 
-            var loader = new Mock<IHalResourceLoader>();
+            var loader = new Mock<IHalResponseLoader>();
             loader.Setup(loader => loader.LoadProperties())
                 .Returns(new Dictionary<string, object> { { propertyName, propertyValue } });
 
@@ -251,7 +252,7 @@ namespace CoreHal.Reader.Tests
                     Date = new DateTime(2020, 7, 5)
                 };
 
-            var loader = new Mock<IHalResourceLoader>();
+            var loader = new Mock<IHalResponseLoader>();
 
             loader.Setup(loader => loader.LoadProperties()).Returns(
                 new Dictionary<string, object>
@@ -291,7 +292,7 @@ namespace CoreHal.Reader.Tests
                     Date = new DateTime(2020, 7, 5)
                 };
 
-            var loader = new Mock<IHalResourceLoader>();
+            var loader = new Mock<IHalResponseLoader>();
 
             loader.Setup(loader => loader.LoadProperties()).Returns(
                 new Dictionary<string, object>
@@ -331,7 +332,7 @@ namespace CoreHal.Reader.Tests
                     Date = new DateTime(2020, 7, 5)
                 };
 
-            var loader = new Mock<IHalResourceLoader>();
+            var loader = new Mock<IHalResponseLoader>();
 
             loader.Setup(loader => loader.LoadProperties()).Returns(
                 new Dictionary<string, object>
@@ -371,7 +372,7 @@ namespace CoreHal.Reader.Tests
                     Date = new DateTime(2020, 7, 5)
                 };
 
-            var loader = new Mock<IHalResourceLoader>();
+            var loader = new Mock<IHalResponseLoader>();
 
             loader.Setup(loader => loader.LoadProperties()).Returns(
                 new Dictionary<string, object>
@@ -414,7 +415,7 @@ namespace CoreHal.Reader.Tests
                     Date = new DateTime(2020, 7, 5)
                 };
 
-            var loader = new Mock<IHalResourceLoader>();
+            var loader = new Mock<IHalResponseLoader>();
 
             loader.Setup(loader => loader.LoadProperties()).Returns(
                 new Dictionary<string, object>
@@ -457,7 +458,7 @@ namespace CoreHal.Reader.Tests
                     Date = new DateTime(2020, 7, 5)
                 };
 
-            var loader = new Mock<IHalResourceLoader>();
+            var loader = new Mock<IHalResponseLoader>();
 
             loader.Setup(loader => loader.LoadProperties()).Returns(
                 new Dictionary<string, object>
