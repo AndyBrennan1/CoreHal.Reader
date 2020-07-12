@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CoreHal.Reader\CoreHal.Reader.csproj" />
+    <ProjectReference Include="..\..\src\CoreHal.Reader\CoreHal.Reader.csproj" />
   </ItemGroup>
 
 </Project>
