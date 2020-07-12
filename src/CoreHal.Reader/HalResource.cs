@@ -14,9 +14,9 @@ namespace CoreHal.Reader
         private readonly IHalResponseLoader halResourceLoader;
         private readonly IEntityMapperFactory mapperFactory;
 
-        public IDictionary<string, IEnumerable<Link>> Links { get; private set; }
-        public IDictionary<string, object> Properties { get; private set; }
-        public IDictionary<string, IEnumerable<HalResource>> EmbeddedItems { get; private set; }
+        public IDictionary<string, IEnumerable<Link>> Links { get; set; }
+        public IDictionary<string, object> Properties { get; set; }
+        public IDictionary<string, IEnumerable<HalResource>> EmbeddedItems { get; set; }
 
         public HalResource(IHalResponseLoader HalResourceLoader)
         {
