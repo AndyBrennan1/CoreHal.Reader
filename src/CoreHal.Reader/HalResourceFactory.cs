@@ -1,7 +1,5 @@
-﻿using CoreHal.Reader.Mapping;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using CoreHal.Reader.Loading;
+using CoreHal.Reader.Mapping;
 
 namespace CoreHal.Reader
 {

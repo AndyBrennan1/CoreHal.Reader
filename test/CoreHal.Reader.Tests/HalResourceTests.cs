@@ -1,4 +1,5 @@
-﻿using CoreHal.Reader.Mapping;
+﻿using CoreHal.Reader.Loading;
+using CoreHal.Reader.Mapping;
 using CoreHal.Reader.Mapping.Exceptions;
 using CoreHal.Reader.Tests.Fixtures;
 using DeepEqual.Syntax;
@@ -45,46 +46,6 @@ namespace CoreHal.Reader.Tests
             {
                 new HalResource(loader.Object, mapperFactory);
             });
-        }
-
-        [Fact]
-        public void Loading_WithNullRawResponseProvided_ThrowsException()
-        {
-            var loader = new Mock<IHalResponseLoader>();
-            var mapperFactory = new Mock<IEntityMapperFactory>();
-
-            var resource = new HalResource(loader.Object, mapperFactory.Object);
-
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                resource.Load(null);
-            });
-        }
-
-        [Fact]
-        public void Loading_WithEmptyRawResponseProvided_ThrowsException()
-        {
-            var loader = new Mock<IHalResponseLoader>();
-            var mapperFactory = new Mock<IEntityMapperFactory>();
-
-            var resource = new HalResource(loader.Object, mapperFactory.Object);
-
-            Assert.Throws<ArgumentException>(() =>
-            {
-                resource.Load(string.Empty);
-            });
-        }
-
-        [Fact]
-        public void Loading_CallsLoad()
-        {
-            var loader = new Mock<IHalResponseLoader>();
-            var mapperFactory = new Mock<IEntityMapperFactory>();
-
-            var resource = new HalResource(loader.Object, mapperFactory.Object);
-            resource.Load("some non null and non empty string");
-
-            loader.Verify(loader => loader.Load(It.IsAny<string>()));
         }
 
         [Fact]

@@ -1,4 +1,5 @@
-﻿using CoreHal.Reader.Mapping;
+﻿using CoreHal.Reader.Loading;
+using CoreHal.Reader.Mapping;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
