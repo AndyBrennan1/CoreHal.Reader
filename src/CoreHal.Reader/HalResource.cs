@@ -151,15 +151,13 @@ namespace CoreHal.Reader
         {
             Requires.NotNullOrEmpty(embeddedItemKey, nameof(embeddedItemKey));
 
-            HalResource embeddedItem;
-
             if (!EmbeddedItems.ContainsKey(embeddedItemKey))
                 throw new NoEmbeddedItemWithKeyException(embeddedItemKey);
 
             if (EmbeddedItems[embeddedItemKey].Count() > 1)
                 throw new EmbeddedItemIsCollectionException(embeddedItemKey);
 
-            embeddedItem = EmbeddedItems[embeddedItemKey].First();
+            var embeddedItem = EmbeddedItems[embeddedItemKey].First();
 
             var embeddedEntity = CastDictionaryTo<TEmbedded>(embeddedItem.Properties);
 
@@ -167,10 +165,24 @@ namespace CoreHal.Reader
         }
 
         /// <inheritdoc/>
-        public IEnumerable<TProperty> CastEmbeddedItemSetAs<TProperty>(string embeddedItemKey)
+        public IEnumerable<TProperty> CastEmbeddedCollectionAs<TProperty>(string embeddedItemKey)
             where TProperty : class, new()
-        {          
-            throw new NotImplementedException();
+        {
+            Requires.NotNullOrEmpty(embeddedItemKey, nameof(embeddedItemKey));
+
+            if (!EmbeddedItems.ContainsKey(embeddedItemKey))
+                throw new NoEmbeddedItemWithKeyException(embeddedItemKey);
+
+            var embeddedItemsCollection = EmbeddedItems[embeddedItemKey];
+
+            var embeddedEntities = new List<TProperty>();
+
+            foreach (var embeddedResource in embeddedItemsCollection)
+            {
+                embeddedEntities.Add(CastDictionaryTo<TProperty>(embeddedResource.Properties));
+            }
+
+            return embeddedEntities;
         }
 
         private TEntity CastDictionaryTo<TEntity>(IDictionary<string, object> properties) where TEntity : class, new()

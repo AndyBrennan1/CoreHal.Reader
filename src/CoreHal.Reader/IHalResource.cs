@@ -2,7 +2,6 @@
 using CoreHal.Graph;
 using System.Collections.Generic;
 using CoreHal.Reader.Mapping;
-using CoreHal.Reader.Loading.Exceptions;
 using CoreHal.Reader.Mapping.Exceptions;
 
 namespace CoreHal.Reader
@@ -117,6 +116,6 @@ namespace CoreHal.Reader
         /// <typeparam name="TEmbedded">The entity type to cast the embedded resource properties into.</typeparam>
         /// <param name="embeddedItemKey">The key from which to access the embedded resource.</param>
         /// <returns>The collection of embedded items found against the provided key and cast as a collection of type <typeparamref name="TEmbedded"/>.</returns>
-        IEnumerable<TEmbedded> CastEmbeddedItemSetAs<TEmbedded>(string embeddedItemKey) where TEmbedded : class, new();
+        IEnumerable<TEmbedded> CastEmbeddedCollectionAs<TEmbedded>(string embeddedItemKey) where TEmbedded : class, new();
     }
 }
