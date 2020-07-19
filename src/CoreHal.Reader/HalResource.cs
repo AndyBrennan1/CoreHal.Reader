@@ -1,5 +1,6 @@
 ﻿using CoreHal.Graph;
 using CoreHal.Reader.Loading;
+using CoreHal.Reader.Loading.Exceptions;
 using CoreHal.Reader.Mapping;
 using CoreHal.Reader.Mapping.Exceptions;
 using System;
@@ -13,12 +14,10 @@ namespace CoreHal.Reader
 {
     public class HalResource : IHalResource
     {
-        private const string LinksKey = "_links";
-        private const string LinkHRefKey = "href";
-        private const string LinkTitleKey = "title";
-
         private readonly IHalResponseLoader halResourceLoader;
         private readonly IEntityMapperFactory mapperFactory;
+        private readonly LinkDataProcessor linkProcessor = new LinkDataProcessor();
+        private readonly EmbeddedItemDataProcessor embeddedItemProcessor = new EmbeddedItemDataProcessor();
 
         public IDictionary<string, IEnumerable<Link>> Links { get; set; }
         public IDictionary<string, object> Properties { get; set; }
@@ -48,6 +47,16 @@ namespace CoreHal.Reader
             EmbeddedItems = new Dictionary<string, IEnumerable<HalResource>>();
         }
 
+        internal HalResource(IDictionary<string, object> properties)
+        {
+            this.Properties = properties;
+            Links = new Dictionary<string, IEnumerable<Link>>();
+            EmbeddedItems = new Dictionary<string, IEnumerable<HalResource>>();
+
+            linkProcessor.Process(properties, this.Links);
+            embeddedItemProcessor.Process(properties, this.EmbeddedItems);
+        }
+
         public void Load(string rawResponse)
         {
             Requires.NotNull(rawResponse, nameof(rawResponse));
@@ -58,7 +67,8 @@ namespace CoreHal.Reader
             {
                 ValidateProvidedDataContainsAuthorisedPropertyTypes(dataDictionary);
 
-                ProcessLinks(dataDictionary);
+                linkProcessor.Process(dataDictionary, this.Links);
+                embeddedItemProcessor.Process(dataDictionary, this.EmbeddedItems);
             }
 
             Properties = dataDictionary;
@@ -181,76 +191,5 @@ namespace CoreHal.Reader
                 || propertyType == typeof(TimeSpan)
                 || propertyType == typeof(Uri);
         }
-
-
-        #region "Loading"
-
-        private void ProcessLinks(IDictionary<string, object> loadedData)
-        {
-            if (loadedData.ContainsKey(LinksKey))
-            {
-                if (loadedData[LinksKey] is IDictionary<string, object> linkRelSetDictionary)
-                {
-                    foreach (var linkRelSetKeyValuePair in linkRelSetDictionary)
-                    {
-                        if (linkRelSetKeyValuePair.Value is IDictionary)
-                        {
-                            ProcessSingularLink(linkRelSetKeyValuePair);
-                        }
-                        else
-                        {
-                            ProcessLinkCollection(linkRelSetKeyValuePair);
-                        }
-                    }
-                }
-                else
-                {
-                    throw new LinksDataInWrongFormatException();
-                }
-                
-                loadedData.Remove(LinksKey);
-            }            
-        }
-
-        private void ProcessLinkCollection(KeyValuePair<string, object> keyValuePair)
-        {
-            var linkPropertySet = (IEnumerable<Dictionary<string, object>>)keyValuePair.Value;
-
-            var thisSetOfLink = new List<Link>();
-
-            foreach (var linkPropertyDictionary in linkPropertySet)
-            {
-                thisSetOfLink.Add(GetLink(linkPropertyDictionary));
-            }
-
-            this.Links.Add(keyValuePair.Key, new List<Link>(thisSetOfLink));
-        }
-
-        private void ProcessSingularLink(KeyValuePair<string, object> keyValuePair)
-        {
-            var linksList = 
-                new List<Link>
-                {
-                    GetLink((IDictionary<string, object>)keyValuePair.Value)
-                };
-
-            this.Links.Add(keyValuePair.Key, linksList);
-        }
-
-        private static Link GetLink(IDictionary<string, object> linkProperties)
-        {
-            var href = linkProperties[LinkHRefKey].ToString();
-
-            var title = linkProperties.ContainsKey(LinkTitleKey)
-                        ? linkProperties[LinkTitleKey].ToString()
-                        : null;
-
-            var link = new Link(href, title);
-
-            return link;
-        }
-
-        #endregion
-
     }
 }
