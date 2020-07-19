@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CoreHal.Reader.Loading.Exceptions
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class EmbeddedItemDataInWrongFormatException : Exception
     {
     }

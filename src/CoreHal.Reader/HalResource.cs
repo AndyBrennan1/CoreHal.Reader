@@ -12,17 +12,33 @@ using Validation;
 
 namespace CoreHal.Reader
 {
-    public class HalResource : IHalResource
+    /// <summary>
+    /// 
+    /// </summary>
+    public class HalResource : IHalResource, IHalResourceLoader
     {
         private readonly IHalResponseLoader halResourceLoader;
         private readonly IEntityMapperFactory mapperFactory;
         private readonly LinkDataProcessor linkProcessor = new LinkDataProcessor();
         private readonly EmbeddedItemDataProcessor embeddedItemProcessor = new EmbeddedItemDataProcessor();
 
+        /// <inheritdoc/>
         public IDictionary<string, IEnumerable<Link>> Links { get; set; }
+
+        /// <inheritdoc/>
         public IDictionary<string, object> Properties { get; set; }
+
+        /// <inheritdoc/>
         public IDictionary<string, IEnumerable<HalResource>> EmbeddedItems { get; set; }
 
+        /// <summary>
+        /// Instantiates a new instance of <see cref="HalResource"/> with a <see cref="IHalResponseLoader"/> provided
+        /// to 'inject' the response data in a format that <see cref="HalResource"/> can understand.
+        /// </summary>
+        /// <param name="HalResourceLoader">
+        /// The <see cref="IHalResponseLoader"/> responsible for 'injecting' data into the <see cref="HalResource"/>
+        /// in a way that it understands it.
+        /// </param>
         public HalResource(IHalResponseLoader HalResourceLoader)
         {
             Requires.NotNull(HalResourceLoader, nameof(HalResourceLoader));
@@ -34,6 +50,14 @@ namespace CoreHal.Reader
             EmbeddedItems = new Dictionary<string, IEnumerable<HalResource>>();
         }
 
+        /// <summary>
+        /// Instantiates a new instance of <see cref="HalResource"/> with an <see cref="IHalResponseLoader"/> provided
+        /// to 'inject' the response data in a format that <see cref="HalResource"/> can understand and an
+        /// <see cref="IEntityMapperFactory"/> that supplies data type mappers for casting the data contained within the 
+        /// <see cref="HalResource"/> to custom entity types.
+        /// </summary>
+        /// <param name="HalResourceLoader"></param>
+        /// <param name="mapperFactory"></param>
         public HalResource(IHalResponseLoader HalResourceLoader, IEntityMapperFactory mapperFactory)
         {
             Requires.NotNull(HalResourceLoader, nameof(HalResourceLoader));
@@ -57,6 +81,7 @@ namespace CoreHal.Reader
             embeddedItemProcessor.Process(properties, this.EmbeddedItems);
         }
 
+        /// <inheritdoc/>
         public void Load(string rawResponse)
         {
             Requires.NotNull(rawResponse, nameof(rawResponse));
@@ -74,7 +99,8 @@ namespace CoreHal.Reader
             Properties = dataDictionary;
         }
 
-        public TEntity GetSimplePropertyAs<TEntity>(string propertyName)
+        /// <inheritdoc/>
+        public TEntity CastSimplePropertyTo<TEntity>(string propertyName)
         {
             Requires.NotNullOrEmpty(propertyName, nameof(propertyName));
 
@@ -84,7 +110,8 @@ namespace CoreHal.Reader
             return result;
         }
 
-        public TEntity GetComplexPropertyAs<TEntity>(
+        /// <inheritdoc/>
+        public TEntity CastComplexPropertyTo<TEntity>(
             string propertyName,
             params KeyValuePair<string, string>[] mappings)
             where TEntity : new()
@@ -92,8 +119,12 @@ namespace CoreHal.Reader
             Requires.NotNullOrEmpty(propertyName, nameof(propertyName));
 
             TEntity result;
+            object foundItem;
 
-            var foundItem = Properties[propertyName];
+            if(!Properties.ContainsKey(propertyName))
+                throw new NoSuchPropertyException(propertyName);
+
+            foundItem = Properties[propertyName];
 
             if (foundItem is IDictionary<string, object> dictionary)
             {
@@ -107,19 +138,68 @@ namespace CoreHal.Reader
             return result;
         }
 
-        public TEntity CastAs<TEntity>()
+        /// <inheritdoc/>
+        public TEntity CastResourceAs<TEntity>() 
             where TEntity : class, new()
         {
-            var mapper = this.mapperFactory.GetMapper<TEntity>();
-            mapper.LoadData(this.Properties);
-
-            return mapper.Map();
+            return CastDictionaryTo<TEntity>(this.Properties);
         }
 
-        public IEnumerable<TProperty> GetEmbeddedSet<TProperty>(string embeddedItemKey)
-            where TProperty : class, new()
+        /// <inheritdoc/>
+        public TEmbedded CastEmbeddedItemAs<TEmbedded>(string embeddedItemKey) 
+            where TEmbedded : class, new()
         {
+            Requires.NotNullOrEmpty(embeddedItemKey, nameof(embeddedItemKey));
+
+            HalResource embeddedItem;
+
+            if (!EmbeddedItems.ContainsKey(embeddedItemKey))
+                throw new NoEmbeddedItemWithKeyException(embeddedItemKey);
+
+            if (EmbeddedItems[embeddedItemKey].Count() > 1)
+                throw new EmbeddedItemIsCollectionException(embeddedItemKey);
+
+            embeddedItem = EmbeddedItems[embeddedItemKey].First();
+
+            var embeddedEntity = CastDictionaryTo<TEmbedded>(embeddedItem.Properties);
+
+            return embeddedEntity;
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<TProperty> CastEmbeddedItemSetAs<TProperty>(string embeddedItemKey)
+            where TProperty : class, new()
+        {          
             throw new NotImplementedException();
+        }
+
+        private TEntity CastDictionaryTo<TEntity>(IDictionary<string, object> properties) where TEntity : class, new()
+        {
+            TEntity result;
+
+            if (this.mapperFactory == null)
+                throw new NoMappersProvidedException();
+
+            var mapper = this.mapperFactory.GetMapper<TEntity>();
+
+            if (mapper == null)
+                throw new TypeHasNoMapperException(typeof(TEntity));
+
+            if (properties == null || !properties.Any())
+                throw new ResourceHasNoPropertiesException();
+
+            mapper.LoadData(properties);
+
+            try
+            {
+                result = mapper.Map();
+            }
+            catch (Exception exception)
+            {
+                throw new ProblemWithMapperException(exception);
+            }
+
+            return result;
         }
 
         private TEntity CreateFromDictionary<TEntity>(

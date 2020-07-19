@@ -1,19 +1,16 @@
 ﻿using CoreHal.Reader.Loading;
 using CoreHal.Reader.Mapping;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
-using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace CoreHal.Reader
 {
-    public class RESTApi
+    /// <summary>
+    /// 
+    /// </summary>
+    public class RESTApi : IRESTApi
     {
-        private readonly IHalResource halResource;
-
-        public Uri ApiRoute { get; set; }
-
         private readonly IHalResponseLoader responseLoader;
         private readonly IEntityMapperFactory entityMapperFactory;
 
@@ -23,21 +20,21 @@ namespace CoreHal.Reader
             this.entityMapperFactory = entityMapperFactory;
         }
 
-        public HalResource GetResource(Uri resourceUri)
+        public async Task<IHalResource> GetResource(Uri resourceUri)
         {
-            HttpResponseMessage result;
             string jsonString;
-            IDictionary<string, object> dict;
 
-            using (var c = new HttpClient())
+            using (var client = new HttpClient())
             {
-                c.BaseAddress = resourceUri;
-                result = c.GetAsync(resourceUri.ToString()).GetAwaiter().GetResult();
-                jsonString = result.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                dict =JsonSerializer.Deserialize<IDictionary<string, object>>(jsonString);
+                client.BaseAddress = resourceUri;
+
+                var result = await client.GetAsync(resourceUri.ToString());
+
+                jsonString = await result.Content.ReadAsStringAsync();
             }
 
             var halResource = new HalResource(responseLoader, entityMapperFactory);
+            halResource.Load(jsonString);
 
             return halResource;
         }
