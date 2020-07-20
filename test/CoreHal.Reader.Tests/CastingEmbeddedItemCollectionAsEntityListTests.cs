@@ -2,6 +2,7 @@
 using CoreHal.Reader.Mapping;
 using CoreHal.Reader.Mapping.Exceptions;
 using CoreHal.Reader.Tests.Fixtures;
+using CoreHal.Reader.Tests.Mapping.Fixtures.Mappers;
 using DeepEqual.Syntax;
 using Moq;
 using System;
@@ -142,14 +143,14 @@ namespace CoreHal.Reader.Tests
                                     new Dictionary<string, object>
                                     {
                                         { "id", Guid.Parse("3b947c60-dcf8-4199-95a1-7a70fd81d16a") },
-                                        { "full-name", "My Name" },
+                                        { "full-Name", "My Name" },
                                         { "date", new DateTime(2020,7,5) }
                                     },
                                     new Dictionary<string, object>
                                     {
-                                        { "id", Guid.Parse("43a4d9f2-d4fc-4664-a1af-e6cdb1e42d6b") },
-                                        { "full-name", "Your Name" },
-                                        { "date", new DateTime(2020,7,19) }
+                                        { "id", Guid.Parse("04463c48-2802-4c8a-82bb-2a106f52464d") },
+                                        { "full-Name", "Your Name" },
+                                        { "date", new DateTime(2020,7,20) }
                                     }
                                 }
                             }
@@ -167,22 +168,17 @@ namespace CoreHal.Reader.Tests
                 },
                 new ComplexModel
                 {
-                    Id = Guid.Parse("3b947c60-dcf8-4199-95a1-7a70fd81d16a"),
-                    Name = "My Name",
-                    Date = new DateTime(2020, 7, 5)
+                    Id = Guid.Parse("04463c48-2802-4c8a-82bb-2a106f52464d"),
+                    Name = "Your Name",
+                    Date = new DateTime(2020, 7, 20)
                 }
             };
 
-            var mapper = new Mock<IEntityMapper<ComplexModel>>();
-            mapper.Setup(mapper => mapper.Map()).Returns(new ComplexModel
-            {
-                Id = Guid.Parse("3b947c60-dcf8-4199-95a1-7a70fd81d16a"),
-                Name = "My Name",
-                Date = new DateTime(2020, 7, 5)
-            });
-
             var mapperFactory = new Mock<IEntityMapperFactory>();
-            mapperFactory.Setup(factory => factory.GetMapper<ComplexModel>()).Returns(mapper.Object);
+
+            mapperFactory
+                .Setup(factory => factory.GetMapper<ComplexModel>())
+                .Returns(() => new MapperForComplexModel());
 
             var resource = new HalResource(loader.Object, mapperFactory.Object);
 

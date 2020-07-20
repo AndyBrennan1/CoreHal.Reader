@@ -14,15 +14,14 @@ namespace CoreHal.Reader.Mapping
             Mappers = new Dictionary<Type, object>();
         }
 
-        public EntityMapperConfiguration AddMapper<TEntity>(IEntityMapper<TEntity> mapper) 
+        public EntityMapperConfiguration AddMapper<TEntity, TMapper>() 
             where TEntity : class, new()
+            where TMapper : class, new()
         {
-            Requires.NotNull(mapper, nameof(mapper));
-
             if (Mappers.ContainsKey(typeof(TEntity)))
                 throw new MapperAlreadyRegisteredForTypeException(typeof(TEntity));
 
-            Mappers.Add(typeof(TEntity), mapper);
+            Mappers.Add(typeof(TEntity), typeof(TMapper));
 
             return this;
         }

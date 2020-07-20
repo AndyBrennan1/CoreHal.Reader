@@ -19,7 +19,11 @@ namespace CoreHal.Reader.Mapping
             if (!Mappers.ContainsKey(typeof(TEntity)))
                 throw new TypeHasNoMapperException(typeof(TEntity));
 
-            return (IEntityMapper<TEntity>)Mappers[typeof(TEntity)];
+            var mapperType = (Type)Mappers[typeof(TEntity)];
+
+            var mapperInstance = (IEntityMapper<TEntity>)Activator.CreateInstance(mapperType);
+
+            return mapperInstance;
         }
 
         public void RegisterMappers()

@@ -77,5 +77,17 @@ namespace CoreHal.Reader.Tests.Mapping
             Assert.IsAssignableFrom<IEntityMapper<ExampleModelWithMapping1>>(mapper);
         }
 
+        [Fact]
+        public void GettingMapper_Twice_ReturnsDifferentInstances()
+        {
+            var factory = new HalEntityMapperFactoryWith2TypesRegistered();
+            factory.RegisterMappers();
+
+            var mapper1 = factory.GetMapper<ExampleModelWithMapping1>();
+            var mapper2 = factory.GetMapper<ExampleModelWithMapping1>();
+
+            Assert.NotSame(mapper1, mapper2);
+        }
+
     }
 }

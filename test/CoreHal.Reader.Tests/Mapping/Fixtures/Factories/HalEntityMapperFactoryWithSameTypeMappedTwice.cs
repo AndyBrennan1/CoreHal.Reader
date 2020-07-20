@@ -1,5 +1,6 @@
 ﻿using CoreHal.Reader.Mapping;
 using CoreHal.Reader.Tests.Mapping.Fixtures.Mappers;
+using CoreHal.Reader.Tests.Mapping.Fixtures.Models;
 
 namespace CoreHal.Reader.Tests.Mapping.Fixtures.Factories
 {
@@ -8,8 +9,8 @@ namespace CoreHal.Reader.Tests.Mapping.Fixtures.Factories
         public override void Configure(EntityMapperConfiguration cfg)
         {
             cfg
-                .AddMapper(new MapperForExampleModel1())
-                .AddMapper(new MapperForExampleModel1());
+                .AddMapper<ExampleModelWithMapping1, MapperForExampleModel1>()
+                .AddMapper<ExampleModelWithMapping1, MapperForExampleModel1>();
         }
     }
 }

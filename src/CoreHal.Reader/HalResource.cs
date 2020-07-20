@@ -179,13 +179,16 @@ namespace CoreHal.Reader
 
             foreach (var embeddedResource in embeddedItemsCollection)
             {
-                embeddedEntities.Add(CastDictionaryTo<TProperty>(embeddedResource.Properties));
+                var x = CastDictionaryTo<TProperty>(embeddedResource.Properties);
+
+                embeddedEntities.Add(x);
             }
 
             return embeddedEntities;
         }
 
-        private TEntity CastDictionaryTo<TEntity>(IDictionary<string, object> properties) where TEntity : class, new()
+        private TEntity CastDictionaryTo<TEntity>(IDictionary<string, object> properties) 
+            where TEntity : class, new()
         {
             TEntity result;
 
