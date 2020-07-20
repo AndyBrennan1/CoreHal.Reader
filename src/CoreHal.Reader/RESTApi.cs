@@ -18,6 +18,7 @@ namespace CoreHal.Reader
         {
             this.responseLoader = responseLoader;
             this.entityMapperFactory = entityMapperFactory;
+            this.entityMapperFactory.RegisterMappers();
         }
 
         public async Task<IHalResource> GetResource(Uri resourceUri)
