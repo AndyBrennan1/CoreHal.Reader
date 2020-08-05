@@ -56,7 +56,10 @@ namespace CoreHal.Reader
 
             if (!response.IsSuccessStatusCode)
             {
-                var problemDetails = JsonSerializer.Deserialize<Problem>(responseBody);
+                var problemDetails = JsonSerializer.Deserialize<Problem>(responseBody, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                });
 
                 throw new ProblemException(problemDetails);
             }
