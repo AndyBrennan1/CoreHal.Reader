@@ -2,6 +2,8 @@
 using CoreHal.Reader.Mapping;
 using System;
 using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace CoreHal.Reader
@@ -36,6 +38,31 @@ namespace CoreHal.Reader
 
             var halResource = new HalResource(responseLoader, entityMapperFactory);
             halResource.Load(jsonString);
+
+            return halResource;
+        }
+
+        public async Task<IHalResource> Create<TEntity>(string url, TEntity resource)
+        {
+            using var client = new HttpClient();
+
+            var newItemJsonString = JsonSerializer.Serialize(resource);
+
+            var content = new StringContent(newItemJsonString, Encoding.UTF8, "application/json");
+
+            using HttpResponseMessage response = await client.PostAsync(url, content);
+
+            var responseBody = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var problemDetails = JsonSerializer.Deserialize<Problem>(responseBody);
+
+                throw new ProblemException(problemDetails);
+            }
+
+            var halResource = new HalResource(responseLoader, entityMapperFactory);
+            halResource.Load(responseBody);
 
             return halResource;
         }
