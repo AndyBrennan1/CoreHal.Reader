@@ -42,7 +42,7 @@ namespace CoreHal.Reader
             return halResource;
         }
 
-        public async Task<IHalResource> Create<TEntity>(string url, TEntity resource)
+        public async Task<IHalResource> Create<TEntity>(Uri url, TEntity resource)
         {
             using var client = new HttpClient();
 
